@@ -14,6 +14,7 @@ connectors/scripts/generate_sample_playbook.py
 fortisoar_connector_engine.egg-info/PKG-INFO
 fortisoar_connector_engine.egg-info/SOURCES.txt
 fortisoar_connector_engine.egg-info/dependency_links.txt
+fortisoar_connector_engine.egg-info/requires.txt
 fortisoar_connector_engine.egg-info/top_level.txt
 integrations/__init__.py
 integrations/crudhub.py

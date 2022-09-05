@@ -13,4 +13,5 @@ setup(
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     license='MIT',
+    install_requires=["requests", "markdown2", "pytest"]
 )
