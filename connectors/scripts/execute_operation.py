@@ -61,7 +61,10 @@ class ExecuteOperation:
             print(initial_message)
 
             conn_obj = self.connector()
-            result = conn_obj.execute(self.config, self.operation_name, self.params)
+            if self.operation_name == "check_health":
+                result = conn_obj.check_health(self.config)
+            else:
+                result = conn_obj.execute(self.config, self.operation_name, self.params)
             print(f"Result: {result}")
             return result
 
