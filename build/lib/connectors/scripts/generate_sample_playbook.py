@@ -10,6 +10,7 @@ import configparser
 import json
 import sys
 import uuid
+from connectors.scripts.utils import is_path_exist, get_dir_name, create_path
 
 config = {}
 
@@ -196,8 +197,8 @@ def create_collection(info_file_json):
 def read_input():
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("--connector_info", help="This is connector json file path")
-        parser.add_argument("--output", help="This is output file path", default=".")
+        parser.add_argument("--connector_info", required=True, help="This is connector json file path")
+        parser.add_argument("--output_path", help="This is output file path", default=None)
         parser.add_argument("--config_path", help="This is config file path", default="config.ini")
         args = parser.parse_args()
         if len(sys.argv) <= 1:
@@ -217,9 +218,19 @@ def read_config_file(config_path):
         print("read_config_file: " + str(err))
 
 
+def validate_input(args: argparse.Namespace) -> None:
+    if not is_path_exist(args.connector_info):
+        raise Exception(f"Connector info path does not exist. Path: {args.connector_info}")
+    if args.output_path is None:
+        args.output_path = get_dir_name(args.connector_info)
+    if not is_path_exist(args.output_path):
+        create_path(args.output_path)
+
+
 def main():
     try:
         args = read_input()
+        validate_input(args)
         global config
         config = read_config_file(args.config_path)
         # This function read connector info.json file for get function details.
@@ -230,7 +241,7 @@ def main():
 
         # Dump generated collection into JSON file.
         with open("{path}/playbooks.json".format(Dummy_Connector=info_file_json["label"],
-                                                 connector_version=info_file_json["version"], path=args.output),
+                                                 connector_version=info_file_json["version"], path=args.output_path),
                   'w') as outfile:
             json.dump(new_playbook_collection, outfile, indent=2)
     except Exception as err:

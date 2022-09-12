@@ -9,8 +9,11 @@ import os
 import re
 import sys
 import markdown2
+import argparse
 from io import StringIO
 from operator import itemgetter
+from connectors.scripts.utils import is_path_exist, get_dir_name, create_path
+
 
 operators = {
     '===': 'as',
@@ -433,12 +436,34 @@ def add_data_ingestion_section(md_file_fp, display_name):
         "\n**TODO:** provide the list of steps to configure the ingestion with the screen shots and limitations if any in this section.")
 
 
-if __name__ == '__main__':
-    # if len(sys.argv) < 3:
-    #     print("Specify info_file_path and output_file_path")
-    #     sys.exit()
-    info_file_path = sys.argv[1]
-    output_file_path = sys.argv[2]
+def read_input():
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--connector_info", help="This is connector json file path")
+        parser.add_argument("--output_path", help="This is output file path", default=".")
+        args = parser.parse_args()
+        if len(sys.argv) <= 1:
+            print("Please provide input --connector_info")
+            exit(0)
+        return args
+    except Exception as err:
+        print("read_input: " + str(err))
+
+
+def validate_input(args: argparse.Namespace) -> None:
+    if not is_path_exist(args.connector_info):
+        raise Exception(f"Connector info path does not exist. Path: {args.connector_info}")
+    if args.output_path is None:
+        args.output_path = get_dir_name(args.connector_info)
+    if not is_path_exist(args.output_path):
+        create_path(args.output_path)
+
+
+def main() -> None:
+    args = read_input()
+    validate_input(args)
+    info_file_path = args.connector_info
+    output_file_path = args.output_path
     output_file_path = output_file_path.strip().rstrip("/")
     if os.path.exists(info_file_path) and info_file_path.endswith('.json'):
         info_json = json.load(open(info_file_path))
@@ -453,8 +478,11 @@ if __name__ == '__main__':
         ingestion_supported = info_json.get('ingestion_supported')
         approved = info_json.get('cs_approved')
 
-        md_file_name = '{output_path}/cyops-connector-{name}-v{version}.md'.format(output_path=output_file_path, name=connector_name, version=version)
-        html_file_name = '{output_path}/cyops-connector-{name}-v{version}.html'.format(output_path=output_file_path, name=connector_name, version=version)
+        md_file_name = '{output_path}/cyops-connector-{name}-v{version}.md'.format(output_path=output_file_path,
+                                                                                   name=connector_name, version=version)
+        html_file_name = '{output_path}/cyops-connector-{name}-v{version}.html'.format(output_path=output_file_path,
+                                                                                       name=connector_name,
+                                                                                       version=version)
 
         md_file_fp = open(md_file_name, 'w+')
 
@@ -498,3 +526,7 @@ if __name__ == '__main__':
         # os.remove(md_file_name)  # comment out this line to generate .md file
     else:
         print("Info.json file does not exist.")
+
+
+if __name__ == '__main__':
+    main()

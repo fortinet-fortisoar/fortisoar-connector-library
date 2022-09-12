@@ -10,21 +10,32 @@ import json
 import argparse
 import os
 import importlib.util
+from connectors.scripts.utils import is_path_exist
 
 
 class ExecuteOperation:
     def __init__(self, connector_path, connector_name, config_name, operation_name, local_data_path):
-        self.local_data = self.read_local_data(local_data_path)
         self.connector_path = connector_path
         self.connector_name = connector_name
         self.config_name = config_name
         self.operation_name = operation_name
+        self.local_data_path = local_data_path
+
         self.connector = self.get_connector()
         self.config = None
         self.params = None
+
+        self.validate_input()
+        self.local_data = self.read_local_data(local_data_path)
         self.load_config_params()
 
-    def load_config_params(self):
+    def validate_input(self) -> None:
+        if not is_path_exist(self.connector_path):
+            raise Exception(f"Connector path does not exist. Path: {self.connector_path}")
+        if not is_path_exist(self.local_data_path):
+            raise Exception(f"Local data path does not exist. Path: {self.local_data_path}")
+
+    def load_config_params(self) -> None:
         conn_data = self.local_data.get(self.connector_name, {})
 
         all_config = conn_data.get("config", {})
@@ -34,7 +45,7 @@ class ExecuteOperation:
         self.params = all_params.get(self.operation_name, {})
 
     @staticmethod
-    def read_local_data(local_data_path):
+    def read_local_data(local_data_path: str) -> dict:
         data = {}
         with open(local_data_path, "r") as fp:
             data = json.load(fp)

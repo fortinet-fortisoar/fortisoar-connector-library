@@ -1,4 +1,5 @@
 LICENSE
+README.md
 setup.py
 connectors/__init__.py
 connectors/core/__init__.py
@@ -9,8 +10,10 @@ connectors/core/result.py
 connectors/core/utils.py
 connectors/scripts/__init__.py
 connectors/scripts/execute_operation.py
+connectors/scripts/generate_connector_review.py
 connectors/scripts/generate_document.py
 connectors/scripts/generate_sample_playbook.py
+connectors/scripts/utils.py
 fortisoar_connector_engine.egg-info/PKG-INFO
 fortisoar_connector_engine.egg-info/SOURCES.txt
 fortisoar_connector_engine.egg-info/dependency_links.txt
