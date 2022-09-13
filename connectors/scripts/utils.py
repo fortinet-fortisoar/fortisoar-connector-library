@@ -1,5 +1,5 @@
 import os
-
+import base64
 
 def get_dir_name(file: str) -> str:
     """Get default output path"""
@@ -18,4 +18,8 @@ def create_path(path: str) -> bool:
         return True
     except IOError as e:
         return False
+
+
+def decode_base64(data: str) -> str:
+    return base64.b64decode(data).decode()
 

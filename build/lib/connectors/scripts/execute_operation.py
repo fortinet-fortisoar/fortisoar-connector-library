@@ -10,7 +10,8 @@ import json
 import argparse
 import os
 import importlib.util
-from connectors.scripts.utils import is_path_exist
+import base64
+from connectors.scripts.utils import is_path_exist, decode_base64
 
 
 class ExecuteOperation:
@@ -48,7 +49,8 @@ class ExecuteOperation:
     def read_local_data(local_data_path: str) -> dict:
         data = {}
         with open(local_data_path, "r") as fp:
-            data = json.load(fp)
+            content = decode_base64(fp.read())
+            data = json.loads(content)
         return data
 
     def get_connector(self):
