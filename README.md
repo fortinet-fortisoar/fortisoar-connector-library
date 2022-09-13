@@ -12,17 +12,16 @@ Generate connector review and so on.
 
 #### Usage:
 1. Execute an action/operation
-    > python3 -m connectors.scripts.execute_operation --connector_path <connector_parent_path> --connector_name <connector_name> --config_name <config_name> --operation_name <operation name> --local_data_path <local data path>
+    > python3 -m connectors.scripts.execute_operation --connector_path <connector_parent_path> --connector_name <connector_name> --config_name <config_name> --operation_name <operation_name> --local_data_path <local_data_path>
     
 2. Generate Sample Playbooks
-    > python3 -m connectors.scripts.generate_sample_playbook --connector_info < complete info.json path > --output_path < output path > --config_path < Playbook generation config.ini path >
+    > python3 -m connectors.scripts.generate_sample_playbook --connector_info <connector_info_path> --output_path <output_path> --config_path <playbook_config_path>
 
 3. Generate Sample Document
-   > python3 -m connectors.scripts.generate_document --connector_info < info.json path > --output_path < output path >
+   > python3 -m connectors.scripts.generate_document --connector_info <connector_info_path> --output_path <output_path>
 
 4. Generate Connector Review
-   > python3 -m connectors.scripts.generate_connector_review --connector_info < info.json file path > --output_path < output path > 
-   > 
+   > python3 -m connectors.scripts.generate_connector_review --connector_info <connector_info_path> --output_path <output_path>
 
 Where:
 
