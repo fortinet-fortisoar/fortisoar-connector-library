@@ -41,7 +41,7 @@ def write_onchange_param(md_file_fp, param):
         md_file_fp.write("</ul>")
 
 
-def write_output_schema(output_schema):
+def write_output_schema(output_schema, md_file_fp):
     if type(output_schema) == dict:
         schema_string = StringIO(json.dumps(output_schema, indent=4))
         space = "&nbsp;"
@@ -100,7 +100,7 @@ def adding_release_notes(info_file_path, md_file_fp, display_name, version):
             md_file_fp.write(html)
 
 
-def add_about_connector_content(md_file_fp, display_name):
+def add_about_connector_content(md_file_fp, display_name, description):
     md_file_fp.write("## About the connector\n")
     md_file_fp.write(description)
     md_file_fp.write("\n")
@@ -113,7 +113,7 @@ def add_about_connector_content(md_file_fp, display_name):
     md_file_fp.write("\n")
 
 
-def add_version_info(md_file_fp, display_name, version, publisher, approved):
+def add_version_info(md_file_fp, display_name, version, publisher, approved, vendor_version):
     md_file_fp.write("\n### Version information\n")
     md_file_fp.write("\n")
     md_file_fp.write("Connector Version: {version}\n".format(version=version))
@@ -146,7 +146,7 @@ def add_installing_connector_content(md_file_fp, connector_name):
     md_file_fp.write("\n")
 
 
-def add_prerequisites_content(md_file_fp, display_name):
+def add_prerequisites_content(md_file_fp, display_name, config):
     md_file_fp.write("## Prerequisites to configuring the connector\n")
     if config:
         md_file_fp.write(
@@ -350,7 +350,7 @@ def add_supported_action_and_output_schema(md_file_fp, operations):
             md_file_fp.write("The output contains the following populated JSON schema:")
             md_file_fp.write("\n")
             output_schema = action['output_schema']
-            write_output_schema(output_schema)
+            write_output_schema(output_schema, md_file_fp)
         elif 'conditional_output_schema' in action:
             conditional_output_schema = action['conditional_output_schema']
             md_file_fp.write("The output contains the following populated JSON schema:")
@@ -364,13 +364,13 @@ def add_supported_action_and_output_schema(md_file_fp, operations):
                     msg_content = extract_multiple_condition(_condition, '&&', action_parameters)
                     md_file_fp.write(msg_content)
                     output_schema = schema.get('output_schema', {})
-                    write_output_schema(output_schema)
+                    write_output_schema(output_schema, md_file_fp)
 
                 elif '||' in original_condition:
                     msg_content = extract_multiple_condition(_condition, '||', action_parameters)
                     md_file_fp.write(msg_content)
                     output_schema = schema.get('output_schema', {})
-                    write_output_schema(output_schema)
+                    write_output_schema(output_schema, md_file_fp)
 
                 else:
                     if _condition.startswith("this"):
@@ -392,7 +392,7 @@ def add_supported_action_and_output_schema(md_file_fp, operations):
                         md_file_fp.write(msg_content)
                         md_file_fp.write("\n")
                         output_schema = schema.get('output_schema', {})
-                        write_output_schema(output_schema)
+                        write_output_schema(output_schema, md_file_fp)
                         md_file_fp.write("\n")
                     msg_content = ''
         elif 'output_schema' in action and action.get('visible', True) and action['output_schema'] == {}:
@@ -487,10 +487,10 @@ def main() -> None:
         md_file_fp = open(md_file_name, 'w+')
 
         # About the connector ----------------------------------------------------------------------------------------------
-        add_about_connector_content(md_file_fp, display_name)
+        add_about_connector_content(md_file_fp, display_name, description)
 
         # - Version information --------------------------------------------------------------------------------------------
-        add_version_info(md_file_fp, display_name, version, publisher, approved)
+        add_version_info(md_file_fp, display_name, version, publisher, approved, vendor_version)
 
         # Adding Release Notes ---------------------------------------------------------------------------------------------
         adding_release_notes(info_file_path, md_file_fp, display_name, version)
@@ -499,7 +499,7 @@ def main() -> None:
         add_installing_connector_content(md_file_fp, connector_name)
 
         # Prerequisites to configuring the connector -----------------------------------------------------------------------
-        add_prerequisites_content(md_file_fp, display_name)
+        add_prerequisites_content(md_file_fp, display_name, config)
 
         # Minimum Permissions Required -------------------------------------------------------------------------------------
         add_minimum_permission_section(md_file_fp)
