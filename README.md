@@ -1,6 +1,6 @@
 ### FortiSOAR Connector Engine
 
-This package will support in local development of FortiSOAR connectors. This package include default import for 
+This library bundles multiple utilities to assist FortiSOAR integrations developments. This package include default import for 
 connectors and some helpful scripts like: Execute any actions, Generate sample playbooks, Generate sample docs,
 Generate connector review and so on.
 
@@ -11,7 +11,7 @@ Generate connector review and so on.
     > pip3 install ./build/fortisoar_connector_engine-1.0.0-py3-none-any.whl
 
 #### Usage:
-1. Execute an action/operation
+1. Execute a connector action
     > python3 -m connectors.scripts.execute_operation --connector_path <connector_parent_path> --connector_name <connector_name> --config_name <config_name> --operation_name <operation_name> --local_data_path <local_data_path>
     
 2. Generate Sample Playbooks

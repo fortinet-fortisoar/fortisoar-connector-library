@@ -23,15 +23,4 @@ def get_logger(name=None):
 logger = get_logger()
 
 
-class SDKVersion:
-    def __init__(self):
-        self.version = None
-        try:
-            pkg_detail = check_output('rpm -qa| grep cyops-integrations', shell=True).decode('utf-8')
-            logger.debug('pkg details: %s' % pkg_detail)
-            self.version = pkg_detail.split('-')[2]
-        except Exception as e:
-            self.version = "dev"
-
-
-SDK_VERSION = SDKVersion().version
+SDK_VERSION = "development"
