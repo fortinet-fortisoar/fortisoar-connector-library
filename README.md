@@ -20,8 +20,8 @@ Generate connector review and so on.
 3. Generate Sample Document
    > python3 -m connectors.scripts.generate_document --connector-info <connector_info_path> --output-path <output_path>
 
-4. Generate Connector Review
-   > python3 -m connectors.scripts.generate_connector_review --connector-info <connector_info_path> --output-path <output_path>
+4. Generate Connector Inspect
+   > python3 -m connectors.scripts.generate_connector_inspect --connector-info <connector_info_path> --output-path <output_path>
 
 Where:
 
