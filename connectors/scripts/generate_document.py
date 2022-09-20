@@ -439,11 +439,11 @@ def add_data_ingestion_section(md_file_fp, display_name):
 def read_input():
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("--connector_info", help="This is connector json file path")
-        parser.add_argument("--output_path", help="This is output file path", default=".")
+        parser.add_argument("--connector-info", required=True, help="This is connector json file path")
+        parser.add_argument("--output-path", help="This is output file path", default=None)
         args = parser.parse_args()
         if len(sys.argv) <= 1:
-            print("Please provide input --connector_info")
+            print("Please provide input --connector-info")
             exit(0)
         return args
     except Exception as err:

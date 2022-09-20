@@ -138,8 +138,6 @@ class Connector(metaclass=abc.ABCMeta):
             is_binary = False
         self._result.set_data(result, is_binary)
         self.clean_up()
-        # if input.get('audit') is True and not settings.LW_AGENT:
-        #     audit.audit_connector_action(input.get('rbac_info'), status)
         return self._result.get_result(), self._result.get_binary()
 
     def _get_op_from_annotation(self, annotation):

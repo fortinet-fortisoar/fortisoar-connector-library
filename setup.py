@@ -12,6 +12,7 @@ setup(
     version='1.0.0',
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
+    url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
     license='MIT',
     install_requires=["requests", "markdown2", "pytest"]
 )

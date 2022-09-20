@@ -12,32 +12,32 @@ Generate connector review and so on.
 
 #### Usage:
 1. Execute a connector action
-    > python3 -m connectors.scripts.execute_operation --connector_path <connector_parent_path> --connector_name <connector_name> --config_name <config_name> --operation_name <operation_name> --local_data_path <local_data_path>
+    > python3 -m connectors.scripts.execute_operation --connector-path <connector_parent_path> --connector-name <connector_name> --config-name <config_name> --operation-name <operation_name> --local-data-path <local_data_path>
     
 2. Generate Sample Playbooks
-    > python3 -m connectors.scripts.generate_sample_playbook --connector_info <connector_info_path> --output_path <output_path> --config_path <playbook_config_path>
+    > python3 -m connectors.scripts.generate_sample_playbook --connector-info <connector_info_path> --output-path <output_path> --config-path <playbook_config_path>
 
 3. Generate Sample Document
-   > python3 -m connectors.scripts.generate_document --connector_info <connector_info_path> --output_path <output_path>
+   > python3 -m connectors.scripts.generate_document --connector-info <connector_info_path> --output-path <output_path>
 
 4. Generate Connector Review
-   > python3 -m connectors.scripts.generate_connector_review --connector_info <connector_info_path> --output_path <output_path>
+   > python3 -m connectors.scripts.generate_connector_review --connector-info <connector_info_path> --output-path <output_path>
 
 Where:
 
---connector_path: Parent folder path of the connector.
+--connector-path: Parent folder path of the connector.
 
---connector_name: Name of connector whose actions you want to execute.
+--connector-name: Name of connector whose actions you want to execute.
 
---config_name: Name of the config that you want to use while running an action.
+--config-name: Name of the config that you want to use while running an action.
 
---operation_name: Name of the operation that you want to execute.
+--operation-name: Name of the operation that you want to execute.
 
---local_data_path: Absolute path where connector local data exist.
+--local-data-path: Absolute path where connector local data exist.
 
---connector_info: Absolute path of the connector "info.json".
+--connector-info: Absolute path of the connector "info.json".
 
---output_path: Path where you want to store the result.
+--output-path: Path where you want to store the result.
 
 
 

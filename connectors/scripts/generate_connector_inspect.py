@@ -2,7 +2,7 @@ import argparse
 from connectors.scripts.utils import is_path_exist, create_path, get_dir_name
 
 
-class ConnectorReview:
+class ConnectorInspect:
     def __init__(self, connector_info: str, output_path: str) -> None:
         self.connector_info: str = connector_info
         self.output_path: str = output_path
@@ -24,12 +24,12 @@ class ConnectorReview:
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--connector_info", type=str, required=True, help="info.json path")
-    parser.add_argument("--output_path", type=str, required=False, help="Output path", default=None)
+    parser.add_argument("--connector-info", type=str, required=True, help="info.json path")
+    parser.add_argument("--output-path", type=str, required=False, help="Output path", default=None)
 
     args = parser.parse_args()
 
-    ConnectorReview(args.connector_info, args.output_path)
+    ConnectorInspect(args.connector_info, args.output_path)
 
 
 if __name__ == "__main__":

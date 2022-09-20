@@ -10,8 +10,7 @@ import json
 import argparse
 import os
 import importlib.util
-import base64
-from connectors.scripts.utils import is_path_exist, decode_base64
+from connectors.scripts.utils import is_path_exist
 
 
 class ExecuteOperation:
@@ -49,8 +48,9 @@ class ExecuteOperation:
     def read_local_data(local_data_path: str) -> dict:
         data = {}
         with open(local_data_path, "r") as fp:
-            content = decode_base64(fp.read())
-            data = json.loads(content)
+            # if local data is encoded
+            # content = decode_base64(fp.read())
+            data = json.load(fp)
         return data
 
     def get_connector(self):
@@ -88,11 +88,11 @@ class ExecuteOperation:
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--connector_path", type=str, required=True, help="Complete connector path")
-    parser.add_argument("--connector_name", type=str, required=True, help="Connector name")
-    parser.add_argument("--config_name", type=str, required=True, help="Configuration name")
-    parser.add_argument("--operation_name", type=str, required=True, help="Operation name")
-    parser.add_argument("--local_data_path", type=str, required=True, help="Local data path")
+    parser.add_argument("--connector-path", type=str, required=True, help="Complete connector path")
+    parser.add_argument("--connector-name", type=str, required=True, help="Connector name")
+    parser.add_argument("--config-name", type=str, required=True, help="Configuration name")
+    parser.add_argument("--operation-name", type=str, required=True, help="Operation name")
+    parser.add_argument("--local-data-path", type=str, required=True, help="Local data path")
 
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,

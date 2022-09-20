@@ -8,16 +8,12 @@
 import argparse
 import configparser
 import json
+import os.path
 import sys
 import uuid
 from connectors.scripts.utils import is_path_exist, get_dir_name, create_path
 
 config = {}
-
-# Need to get this values from database
-# Database Name: venom
-# Table Name: workflow_step_types
-# Field Name: uuid
 alert_workflow_step_types_uuid = "f414d039-bb0d-4e59-9c39-a8f1e880b18a"
 connector_step_workflow_step_types_uuid = "0bfed618-0316-11e7-93ae-92361f002671"
 
@@ -164,7 +160,7 @@ def get_tags(info_file_json):
     if not recordTags:
         name = info_file_json.get("name", "")
         if name:
-            recordTags = [name.split("-")[0].capitalize(), name]
+            recordTags = [name]
         else:
             raise Exception("connector name not found.")
     return recordTags
@@ -197,12 +193,12 @@ def create_collection(info_file_json):
 def read_input():
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("--connector_info", required=True, help="This is connector json file path")
-        parser.add_argument("--output_path", help="This is output file path", default=None)
-        parser.add_argument("--config_path", help="This is config file path", default="config.ini")
+        parser.add_argument("--connector-info", required=True, help="This is connector json file path")
+        parser.add_argument("--output-path", help="This is output file path", default=None)
+        parser.add_argument("--config-path", help="This is config file path", default=None)
         args = parser.parse_args()
         if len(sys.argv) <= 1:
-            print("Please provide input --connector_info")
+            print("Please provide input --connector-info")
             exit(0)
         return args
     except Exception as err:
@@ -222,7 +218,9 @@ def validate_input(args: argparse.Namespace) -> None:
     if not is_path_exist(args.connector_info):
         raise Exception(f"Connector info path does not exist. Path: {args.connector_info}")
     if args.output_path is None:
-        args.output_path = get_dir_name(args.connector_info)
+        args.output_path = os.path.join(get_dir_name(args.connector_info), "playbooks")
+    if args.config_path is None:
+        args.config_path = os.path.join(os.path.dirname(__file__), "playbook_config.ini")
     if not is_path_exist(args.output_path):
         create_path(args.output_path)
 
