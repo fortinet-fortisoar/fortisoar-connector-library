@@ -23,6 +23,9 @@ Generate connector review and so on.
 4. Generate Connector Inspect
    > python3 -m connectors.scripts.generate_connector_inspect --connector-info <connector_info_path> --output-path <output_path>
 
+5. Clean Output Schema
+   > python3 -m connectors.scripts.clean_output_schema --connector-info <connector_info_path>
+
 Where:
 
 --connector-path: Parent folder path of the connector.
