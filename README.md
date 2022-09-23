@@ -8,6 +8,7 @@ Generate connector review and so on.
     > git clone https://github.com/fortinet-fortisoar/fortisoar-connector-engine
     > cd ./fortisoar-connector-engine
     > source <env_path>/env/bin/activate (Optional but recommended)
+    > python3 ./setup.py bdist_wheel
     > pip3 install ./build/fortisoar_connector_engine-1.0.0-py3-none-any.whl
 
 #### Usage:
