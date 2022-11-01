@@ -7,7 +7,7 @@
 from setuptools import find_packages, setup
 import os
 
-build_num = os.environ.get("BUILD_NUMBER")
+build_num = os.environ.get("BUILD_NUMBER", 1)
 
 setup(
     name='fortisoar-connector-engine',
