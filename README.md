@@ -29,19 +29,19 @@ Generate connector review and so on.
 
 Where:
 
---connector-path: Parent folder path of the connector.
+--connector-path: Specify parent folder absolute path of the connector.
 
---connector-name: Name of connector whose actions you want to execute.
+--connector-name: Specify the name of the connector whose actions you want to execute.
 
---config-name: Name of the config that you want to use while running an action.
+--config-name: Specify the name of the config that you want to use while running an action.
 
---operation-name: Name of the operation that you want to execute.
+--operation-name: Specify the name of the operation that you want to execute.
 
---local-data-path: Absolute path where connector local data exist.
+--local-data-path: Specify the absolute path where connector local data exist.
 
---connector-info: Absolute path of the connector "info.json".
+--connector-info: Specify absolute path of the connector "info.json".
 
---output-path: Path where you want to store the result.
+--output-path: Specify absolute path where you want to store the result.
 
 
 

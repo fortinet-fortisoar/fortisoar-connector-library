@@ -1,6 +1,7 @@
 import os
 import base64
 
+
 def get_dir_name(file: str) -> str:
     """Get default output path"""
     return os.path.dirname(file)
@@ -22,4 +23,3 @@ def create_path(path: str) -> bool:
 
 def decode_base64(data: str) -> str:
     return base64.b64decode(data).decode()
-
