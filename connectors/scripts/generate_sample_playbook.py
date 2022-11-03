@@ -220,7 +220,7 @@ def validate_input(args: argparse.Namespace) -> None:
     if args.output_path is None:
         args.output_path = os.path.join(get_dir_name(args.connector_info), "playbooks")
     if args.config_path is None:
-        args.config_path = os.path.join(os.path.dirname(__file__), "playbook_config.ini")
+        args.config_path = os.path.join(os.path.dirname(__file__), "config", "playbook_config.ini")
     if not is_path_exist(args.output_path):
         create_path(args.output_path)
 
