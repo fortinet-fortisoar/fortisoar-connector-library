@@ -11,6 +11,7 @@ import argparse
 import os
 import importlib.util
 from connectors.scripts.utils import is_path_exist
+from connectors.scripts.utils import read_local_data
 
 
 class ExecuteOperation:
@@ -26,7 +27,7 @@ class ExecuteOperation:
         self.params = None
 
         self.validate_input()
-        self.local_data = self.read_local_data(local_data_path)
+        self.local_data = read_local_data(local_data_path)
         self.load_config_params()
 
     def validate_input(self) -> None:
@@ -43,15 +44,6 @@ class ExecuteOperation:
 
         all_params = conn_data.get("params", {})
         self.params = all_params.get(self.operation_name, {})
-
-    @staticmethod
-    def read_local_data(local_data_path: str) -> dict:
-        data = {}
-        with open(local_data_path, "r") as fp:
-            # if local data is encoded
-            # content = decode_base64(fp.read())
-            data = json.load(fp)
-        return data
 
     def get_connector(self):
         conn_dir = os.path.dirname(self.connector_path)
@@ -86,7 +78,6 @@ class ExecuteOperation:
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--connector-path", type=str, required=True, help="Complete connector path")
     parser.add_argument("--connector-name", type=str, required=True, help="Connector name")
