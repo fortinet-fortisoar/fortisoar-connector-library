@@ -1,5 +1,6 @@
 import os
 import base64
+import json
 
 
 def get_dir_name(file: str) -> str:
@@ -23,3 +24,18 @@ def create_path(path: str) -> bool:
 
 def decode_base64(data: str) -> str:
     return base64.b64decode(data).decode()
+
+
+def read_local_data(local_data_path: str) -> dict:
+    data = {}
+    with open(local_data_path, "r") as fp:
+        # if local data is encoded
+        # content = decode_base64(fp.read())
+        data = json.load(fp)
+    return data
+
+
+def write_local_data(local_data_path: str, local_data: dict) -> None:
+    with open(local_data_path, "w") as fp:
+        fp.write(json.dumps(local_data, indent=2))
+        fp.close()
