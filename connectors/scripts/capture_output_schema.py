@@ -13,8 +13,10 @@ def update_output_schema(local_data_path: str, connector_name: str, operation_na
         conn_data["output_schema"] = {}
 
     output_schema_data = conn_data.get("output_schema")
-    output_schema_data[operation_name] = output_schema
-
+    if isinstance(output_schema, dict):
+        output_schema_data[operation_name] = output_schema
+    else:
+        output_schema_data[operation_name] = {}
     write_local_data(local_data_path, local_data)
 
 
