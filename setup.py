@@ -15,6 +15,7 @@ setup(
     name='fortisoar-connector-engine',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
     version=f'{release_verion}-{build_num}',
+    py_modules=['setupnovernormalize'],
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
