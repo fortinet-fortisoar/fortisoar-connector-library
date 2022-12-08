@@ -9,6 +9,8 @@ import os
 
 build_num = os.environ.get("BUILD_NUMBER", 1)
 
+print(build_num)
+
 setup(
     name='fortisoar-connector-engine',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
