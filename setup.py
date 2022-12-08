@@ -6,8 +6,8 @@
 
 from setuptools import find_packages, setup
 import os
-import pkg_resources
-pkg_resources.extern.packaging.version.Version = pkg_resources.SetuptoolsLegacyVersion
+from setuptools.extern.packaging import version
+version.Version = version.LegacyVersion
 
 build_num = os.environ.get("BUILD_NUMBER", 1)
 
