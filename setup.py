@@ -14,7 +14,7 @@ print(build_num)
 setup(
     name='fortisoar-connector-engine',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
-    version='1.0.0-{build_num}',
+    version=f'1.0.0-{build_num}',
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
