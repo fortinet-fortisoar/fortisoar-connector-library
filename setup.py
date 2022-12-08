@@ -6,6 +6,8 @@
 
 from setuptools import find_packages, setup
 import os
+import pkg_resources
+pkg_resources.extern.packaging.version.Version = pkg_resources.SetuptoolsLegacyVersion
 
 build_num = os.environ.get("BUILD_NUMBER", 1)
 
@@ -15,7 +17,6 @@ setup(
     name='fortisoar-connector-engine',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
     version=f'{release_verion}-{build_num}',
-    py_modules=['setupnovernormalize'],
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
