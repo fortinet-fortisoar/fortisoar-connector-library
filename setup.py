@@ -7,8 +7,7 @@
 from setuptools import find_packages, setup
 import os
 
-
-build_num = os.environ.get("BUILD_NUMBER", 1)
+build_num = os.environ.get("i_build_number", 1)
 
 release_verion=os.environ.get("release_version")
 
