@@ -10,7 +10,7 @@ import os
 
 build_num = os.environ.get("BUILD_NUMBER", 1)
 
-release_verion='1.0.0'
+release_verion=os.environ.get("release_version")
 
 setup(
     name='fortisoar-connector-engine',
