@@ -11,10 +11,10 @@ build_num = os.environ.get("i_build_number", 1)
 
 release_verion=os.environ.get("release_version")
 
-f_name=os.environ.get("s_wheel_pkg_name")
+s_name=os.environ.get("s_wheel_pkg_name")
 
 setup(
-    name=f'{f_name}',
+    name=f'{s_name}',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
     version=f'{release_verion}-{build_num}',
     description='FortiSOAR Connector Engine Library',
