@@ -5,7 +5,7 @@
   Copyright end """
 
 from setuptools import find_packages, setup
-import os,setupovernormalize
+import os,setupnovernormalize
 
 build_num = os.environ.get("i_build_number", 1)
 
