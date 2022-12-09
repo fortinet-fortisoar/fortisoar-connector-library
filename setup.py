@@ -5,14 +5,18 @@
   Copyright end """
 
 from setuptools import find_packages, setup
-import os
+import os,setupnovernormalize
 
-build_num = os.environ.get("BUILD_NUMBER", 1)
+build_num = os.environ.get("i_build_number", 1)
+
+release_verion=os.environ.get("release_version")
+
+s_name=os.environ.get("s_wheel_pkg_name")
 
 setup(
-    name='fortisoar-connector-engine',
+    name=f'{s_name}',
     packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
-    version=f'1.0.0-{build_num}',
+    version=f'{release_verion}-{build_num}',
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
