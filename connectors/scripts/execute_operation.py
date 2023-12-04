@@ -85,6 +85,7 @@ def main():
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
                                    args.operation_name, args.connector_data)
+    
     exec_action.execute(True)
 
 
