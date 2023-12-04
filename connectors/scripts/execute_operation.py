@@ -54,7 +54,7 @@ class ExecuteOperation:
             print(e)
         return None
 
-    def execute(self):
+    def execute(self, print_result):
         try:
             initial_message = f"Operation Name: {self.operation_name}\n" \
                               f"Configuration: {self.config}\n" \
@@ -66,7 +66,8 @@ class ExecuteOperation:
                 result = conn_obj.check_health(self.config)
             else:
                 result = conn_obj.execute(self.config, self.operation_name, self.params)
-            print(f"Result: {result}")
+            if print_result:
+                print(f"Result: {result}")
             return result
 
         except Exception as e:
@@ -84,7 +85,7 @@ def main():
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
                                    args.operation_name, args.connector_data)
-    exec_action.execute()
+    exec_action.execute(True)
 
 
 if __name__ == "__main__":

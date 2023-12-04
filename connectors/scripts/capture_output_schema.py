@@ -30,7 +30,7 @@ def main():
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
                                    args.operation_name, args.connector_data)
-    result = exec_action.execute()
+    result = exec_action.execute(False)
     result = clean(result)
     update_output_schema(args.local_data_path, args.connector_name, args.operation_name, result)
     print(result)
