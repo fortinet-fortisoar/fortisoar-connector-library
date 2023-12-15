@@ -360,13 +360,14 @@ def check_requirements_txt_non_restrict(requirement_path):
             requirement_file_data = [line.rstrip() for line in f]
 
             for package in requirement_file_data:
-                split_string = package.split('==')
-                if len(split_string) == 1:
+                # split_string = package.split('==')
+                # if len(split_string) == 1:
+                if '==' in package:
                     result['Status'] = 'Fail'
-                    output.append({"Requirement Txt Package": f'<p style="color:red"> {split_string} </p>',
+                    output.append({"Requirement Txt Package": f'<p style="color:red"> {package} </p>',
                                    'Version Available': f'<p style="color:red"> {True} </p>'})
                 else:
-                    output.append({"Requirement Txt Package": f'<p style="color:green"> {split_string} </p>',
+                    output.append({"Requirement Txt Package": f'<p style="color:green"> {package} </p>',
                                    'Version Available': f'<p style="color:green"> {False} </p>'})
         result['Result'] = output
         return result
