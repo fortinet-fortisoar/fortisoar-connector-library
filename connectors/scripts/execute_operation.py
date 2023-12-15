@@ -14,12 +14,13 @@ from connectors.scripts.utils import is_path_exist
 
 
 class ExecuteOperation:
-    def __init__(self, connector_path, connector_name, config_name, operation_name, connector_data):
+    def __init__(self, connector_path, connector_name, config_name, operation_name, connector_data, keys_to_mask):
         self.connector_path = connector_path
         self.connector_name = connector_name
         self.config_name = config_name
         self.operation_name = operation_name
         self.connector_data = connector_data
+        self.keys_to_mask = keys_to_mask
 
         self.connector = self.get_connector()
         self.config = None
@@ -56,9 +57,11 @@ class ExecuteOperation:
 
     def execute(self, print_result):
         try:
+            config = self.mask_keys(self.config)
+            params = self.mask_keys(self.params)
             initial_message = f"Operation Name: {self.operation_name}\n" \
-                              f"Configuration: {self.config}\n" \
-                              f"Parameters: {self.params}\n"
+                              f"Configuration: {config}\n" \
+                              f"Parameters: {params}\n"
             print(initial_message)
 
             conn_obj = self.connector()
@@ -73,6 +76,13 @@ class ExecuteOperation:
         except Exception as e:
             print(e)
 
+    def mask_keys(self, json_data):
+        for key in json_data.keys():
+            if key in self.keys_to_mask:
+                json_data[key] = "********"
+        return json_data
+
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -81,11 +91,11 @@ def main():
     parser.add_argument("--config-name", type=str, required=True, help="Configuration name")
     parser.add_argument("--operation-name", type=str, required=True, help="Operation name")
     parser.add_argument("--connector-data", type=str, required=True, help="Connector data")
+    parser.add_argument("--keys-to-mask", type=str, required=True, help="Connector's keys to mask")
 
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
-                                   args.operation_name, args.connector_data)
-    
+                                   args.operation_name, args.connector_data, args.keys_to_mask.split(','))
     exec_action.execute(True)
 
 
