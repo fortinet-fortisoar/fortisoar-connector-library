@@ -26,14 +26,15 @@ def main():
     parser.add_argument("--operation-name", type=str, required=True, help="Operation name")
     parser.add_argument("--local-data-path", type=str, required=True, help="Local data path")
     parser.add_argument("--connector-data", type=str, required=True, help="Connector data")
+    parser.add_argument("--keys-to-mask", type=str, required=True, help="Connector's keys to mask")
 
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
-                                   args.operation_name, args.connector_data)
+                                   args.operation_name, args.connector_data, args.keys_to_mask.split(','))
     result = exec_action.execute(False)
     result = clean(result)
     update_output_schema(args.local_data_path, args.connector_name, args.operation_name, result)
-    print(result)
+    print(f"Result: {result}")
 
 
 if __name__ == "__main__":
