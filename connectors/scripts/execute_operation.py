@@ -1,5 +1,5 @@
 """ Copyright start
-  Copyright (C) 2008 - 2022 Fortinet Inc.
+  Copyright (C) 2008 - 2023 Fortinet Inc.
   All rights reserved.
   FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
   Copyright end """
@@ -10,6 +10,7 @@ import json
 import argparse
 import os
 import importlib.util
+import copy
 from connectors.scripts.utils import is_path_exist
 
 
@@ -57,8 +58,8 @@ class ExecuteOperation:
 
     def execute(self, print_result):
         try:
-            config = self.mask_keys(self.config)
-            params = self.mask_keys(self.params)
+            config = self.mask_keys(copy.deepcopy(self.config))
+            params = self.mask_keys(copy.deepcopy(self.params))
             initial_message = f"Operation Name: {self.operation_name}\n" \
                               f"Configuration: {config}\n" \
                               f"Parameters: {params}\n"
