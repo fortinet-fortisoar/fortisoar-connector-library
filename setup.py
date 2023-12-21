@@ -1,5 +1,5 @@
 """ Copyright start
-  Copyright (C) 2008 - 2022 Fortinet Inc.
+  Copyright (C) 2008 - 2023 Fortinet Inc.
   All rights reserved.
   FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
   Copyright end """
@@ -21,6 +21,6 @@ setup(
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
     license='MIT',
-    install_requires=["requests", "markdown2", "pytest"],
+    install_requires=["requests", "markdown2", "pytest", "json2html", "camelcase", "Pillow"],
     package_data={'connectors.scripts': ['config/*', ]}
 )
