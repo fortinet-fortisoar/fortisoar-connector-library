@@ -1,3 +1,9 @@
+""" Copyright start
+  Copyright (C) 2008 - 2023 Fortinet Inc.
+  All rights reserved.
+  FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
+  Copyright end """
+
 import argparse
 from connectors.scripts.execute_operation import ExecuteOperation
 from connectors.scripts.clean_output_schema import clean
