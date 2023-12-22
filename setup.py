@@ -15,7 +15,7 @@ s_name=os.environ.get("s_wheel_pkg_name")
 
 setup(
     name=f'{s_name}',
-    packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
+    packages=find_packages(include=['connectors', 'connectors.core', 'connectors.cyops_utilities', 'connectors.scripts', 'integrations']),
     version=f'{release_verion}-{build_num}',
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
