@@ -1,11 +1,11 @@
 """ Copyright start
-  Copyright (C) 2008 - 2023 Fortinet Inc.
+  Copyright (C) 2008 - 2024 Fortinet Inc.
   All rights reserved.
   FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
   Copyright end """
 
 from setuptools import find_packages, setup
-import os,setupnovernormalize
+import os
 
 build_num = os.environ.get("i_build_number", 1)
 
