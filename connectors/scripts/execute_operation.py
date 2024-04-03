@@ -1,7 +1,6 @@
 """ Copyright start
-  Copyright (C) 2008 - 2023 Fortinet Inc.
-  All rights reserved.
-  FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
+  MIT License
+  Copyright (c) 2024 Fortinet Inc
   Copyright end """
 
 import inspect
@@ -64,8 +63,8 @@ class ExecuteOperation:
                               f"Configuration: {config}\n" \
                               f"Parameters: {params}\n"
             print(initial_message)
-
-            conn_obj = self.connector()
+            info_json_data = self.read_info_json()
+            conn_obj = self.connector(info_json=info_json_data)
             if self.operation_name == "check_health":
                 result = conn_obj.check_health(self.config)
             else:
@@ -76,6 +75,21 @@ class ExecuteOperation:
 
         except Exception as e:
             print(e)
+
+    def read_info_json(self):
+        try:
+            info_json_file_path = self.connector_path + '/info.json'
+            with open(info_json_file_path, 'r') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            print(f"File '{self.connector_path + '/info.json'}' not found.")
+            return None
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON from file '{self.connector_path + '/info.json'}'.")
+            return None
+        finally:
+            file.close()
+
 
     def mask_keys(self, json_data):
         for key in json_data.keys():
