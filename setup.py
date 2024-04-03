@@ -20,6 +20,6 @@ setup(
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
     license='MIT',
-    install_requires=["requests", "markdown2", "pytest", "json2html", "camelcase", "Pillow"],
+    install_requires=["requests", "markdown2", "json2html", "camelcase", "Pillow"],
     package_data={'connectors.scripts': ['config/*', ]}
 )
