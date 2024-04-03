@@ -80,12 +80,15 @@ class ExecuteOperation:
         try:
             info_json_file_path = self.connector_path + '/info.json'
             with open(info_json_file_path, 'r') as file:
-                data = json.load(file)
-                return data
+                return json.load(file)
         except FileNotFoundError:
+            print(f"File '{self.connector_path + '/info.json'}' not found.")
             return None
         except json.JSONDecodeError:
+            print(f"Error decoding JSON from file '{self.connector_path + '/info.json'}'.")
             return None
+        finally:
+            file.close()
 
 
     def mask_keys(self, json_data):
