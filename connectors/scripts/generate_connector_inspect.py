@@ -92,45 +92,18 @@ class Image(collections.namedtuple('Image', image_fields)):
 
 
 def get_image_size(file_path):
-    """
-    Return (width, height) for a given img file content - no external
-    dependencies except the os and struct builtin modules
-    """
     img = get_image_metadata(file_path)
     return (img.width, img.height)
 
 
 def get_image_metadata(file_path):
-    """
-    Return an `Image` object for a given img file content - no external
-    dependencies except the os and struct builtin modules
-
-    Args:
-        file_path (str): path to an image file
-
-    Returns:
-        Image: (path, type, file_size, width, height)
-    """
     size = os.path.getsize(file_path)
 
-    # be explicit with open arguments - we need binary mode
     with io.open(file_path, "rb") as input:
         return get_image_metadata_from_bytesio(input, size, file_path)
 
 
 def get_image_metadata_from_bytesio(input, size, file_path=None):
-    """
-    Return an `Image` object for a given img file content - no external
-    dependencies except the os and struct builtin modules
-
-    Args:
-        input (io.IOBase): io object support read & seek
-        size (int): size of buffer in byte
-        file_path (str): path to an image file
-
-    Returns:
-        Image: (path, type, file_size, width, height)
-    """
     height = -1
     width = -1
     data = input.read(26)
@@ -378,13 +351,15 @@ def check_pb_name(pb_json_data):
         logger.info("check_pb_name:{}".format(err))
 
 
-def check_image_size(connector_path, info_json_data):
+def check_connector_image(connector_path, info_json_data):
     try:
         result = {'Test Case': 'Check Image Sizes', 'Result': '', 'Status': 'Pass'}
         output = []
+        im_small = connector_path + '/images/' + info_json_data.get('icon_small_name')
+        im_large = connector_path + '/images/' + info_json_data.get('icon_large_name')
 
-        output_large = get_image_size('large.png')
-        output_small = get_image_size('small.png')
+        output_large = get_image_size(im_large)
+        output_small = get_image_size(im_small)
 
         small_status = large_status = False
         if 32 in output_small:
@@ -398,7 +373,7 @@ def check_image_size(connector_path, info_json_data):
         shutil.copy(connector_path + '/images/' + info_json_data.get('icon_large_name'), output_dir)
         return result
     except Exception as err:
-        logger.info("check_image_size:{}".format(err))
+        logger.info("check_connector_image:{}".format(err))
 
 
 def check_help_doc(info_json_data):
@@ -579,7 +554,7 @@ def run_sanity(connector_info_path, playbook_path, output_path):
             playbook_disabled_result = check_pb_disabled(pb_json_data)
             playbook_step_names_result = check_pb_step_names(pb_json_data)
             playbook_name_result = check_pb_name(pb_json_data)
-            image_size_result = check_image_size(connector_path, info_json_data)
+            image_size_result = check_connector_image(connector_path, info_json_data)
             help_doc_result = check_help_doc(info_json_data)
             tags_result = check_tags(pb_json_data)
             debug_mode_off_result = check_debug_mode_off(pb_json_data)
