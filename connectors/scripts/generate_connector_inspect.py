@@ -14,7 +14,11 @@ from json2html import *
 
 from logging.handlers import RotatingFileHandler
 from camelcase import CamelCase
-from PIL import Image
+import collections
+import json
+import os
+import io
+import struct
 
 LOG_FILE_PATH = join(os.path.dirname(os.path.abspath(__file__)), 'unit_test.log')
 output_dir = join(os.path.dirname(os.path.abspath(__file__)), 'sanity_output')
@@ -27,6 +31,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel('INFO')
 cs = CamelCase(' is ', ' for ', ' to ', ' of ', ' from ', 'URL', 'an', 'a', 'in')
+FILE_UNKNOWN = "Sorry, don't know how to get size for this file."
 
 
 class ConnectorInspect:
@@ -48,6 +53,110 @@ class ConnectorInspect:
         connector_info_path = self.connector_info
         playbook_path = get_dir_name(self.connector_info) + "/playbooks/playbooks.json"
         run_sanity(connector_info_path, playbook_path, self.output_path)
+
+
+class UnknownImageFormat(Exception):
+    pass
+
+
+types = collections.OrderedDict()
+
+PNG = types['PNG'] = 'PNG'
+
+image_fields = ['path', 'type', 'file_size', 'width', 'height']
+
+
+class Image(collections.namedtuple('Image', image_fields)):
+
+    def to_str_row(self):
+        return ("%d\t%d\t%d\t%s\t%s" % (
+            self.width,
+            self.height,
+            self.file_size,
+            self.type,
+            self.path.replace('\t', '\\t'),
+        ))
+
+    def to_str_row_verbose(self):
+        return ("%d\t%d\t%d\t%s\t%s\t##%s" % (
+            self.width,
+            self.height,
+            self.file_size,
+            self.type,
+            self.path.replace('\t', '\\t'),
+            self))
+
+    def to_str_json(self, indent=None):
+        return json.dumps(self._asdict(), indent=indent)
+
+
+def get_image_size(file_path):
+    """
+    Return (width, height) for a given img file content - no external
+    dependencies except the os and struct builtin modules
+    """
+    img = get_image_metadata(file_path)
+    return (img.width, img.height)
+
+
+def get_image_metadata(file_path):
+    """
+    Return an `Image` object for a given img file content - no external
+    dependencies except the os and struct builtin modules
+
+    Args:
+        file_path (str): path to an image file
+
+    Returns:
+        Image: (path, type, file_size, width, height)
+    """
+    size = os.path.getsize(file_path)
+
+    # be explicit with open arguments - we need binary mode
+    with io.open(file_path, "rb") as input:
+        return get_image_metadata_from_bytesio(input, size, file_path)
+
+
+def get_image_metadata_from_bytesio(input, size, file_path=None):
+    """
+    Return an `Image` object for a given img file content - no external
+    dependencies except the os and struct builtin modules
+
+    Args:
+        input (io.IOBase): io object support read & seek
+        size (int): size of buffer in byte
+        file_path (str): path to an image file
+
+    Returns:
+        Image: (path, type, file_size, width, height)
+    """
+    height = -1
+    width = -1
+    data = input.read(26)
+    msg = " raised while trying to decode as JPEG."
+
+    if ((size >= 24) and data.startswith(b'\211PNG\r\n\032\n')
+            and (data[12:16] == b'IHDR')):
+        # PNGs
+        imgtype = PNG
+        w, h = struct.unpack(">LL", data[16:24])
+        width = int(w)
+        height = int(h)
+    elif (size >= 16) and data.startswith(b'\211PNG\r\n\032\n'):
+        # older PNGs
+        imgtype = PNG
+        w, h = struct.unpack(">LL", data[8:16])
+        width = int(w)
+        height = int(h)
+
+    else:
+        raise UnknownImageFormat(FILE_UNKNOWN)
+
+    return Image(path=file_path,
+                 type=imgtype,
+                 file_size=size,
+                 width=width,
+                 height=height)
 
 
 def _get_json_data(json_file_path):
@@ -244,14 +353,14 @@ def check_image_size(connector_path, info_json_data):
     try:
         result = {'Test Case': 'Check Image Sizes', 'Result': '', 'Status': 'Pass'}
         output = []
-        im_small = Image.open(connector_path + '/images/' + info_json_data.get('icon_small_name'))
-        im_large = Image.open(connector_path + '/images/' + info_json_data.get('icon_large_name'))
-        s_width, s_height = im_small.size
-        l_width, l_height = im_large.size
+
+        output_large = get_image_size('large.png')
+        output_small = get_image_size('small.png')
+
         small_status = large_status = False
-        if s_height == s_width == 32:
+        if 32 in output_small:
             small_status = True
-        if l_height == l_width == 80:
+        if 80 in output_large:
             large_status = True
         output.append({'image': info_json_data.get('icon_small_name'), 'Correct size': small_status})
         output.append({'image': info_json_data.get('icon_large_name'), 'Correct size': large_status})
@@ -285,6 +394,7 @@ def check_help_doc(info_json_data):
         return result
     except Exception as err:
         logger.info("check_help_doc:{}".format(err))
+
 
 def check_tags(pb_json_data):
     try:
