@@ -68,27 +68,7 @@ image_fields = ['path', 'type', 'file_size', 'width', 'height']
 
 
 class Image(collections.namedtuple('Image', image_fields)):
-
-    def to_str_row(self):
-        return ("%d\t%d\t%d\t%s\t%s" % (
-            self.width,
-            self.height,
-            self.file_size,
-            self.type,
-            self.path.replace('\t', '\\t'),
-        ))
-
-    def to_str_row_verbose(self):
-        return ("%d\t%d\t%d\t%s\t%s\t##%s" % (
-            self.width,
-            self.height,
-            self.file_size,
-            self.type,
-            self.path.replace('\t', '\\t'),
-            self))
-
-    def to_str_json(self, indent=None):
-        return json.dumps(self._asdict(), indent=indent)
+    pass
 
 
 def get_image_size(file_path):
@@ -187,6 +167,7 @@ def check_description(info_json_data):
         return result
 
     except Exception as err:
+        print("check_description:{}".format(err))
         logger.info("check_description:{}".format(err))
 
 
@@ -212,6 +193,7 @@ def check_conn_descripton_non_camel(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_conn_descripton_non_camel:{}".format(err))
         logger.info("check_conn_descripton_non_camel:{}".format(err))
 
 
@@ -247,6 +229,7 @@ def check_pb_descripton_non_camel(pb_json_data):
         logger.warning("AFTER APPENDING")
         return result
     except Exception as err:
+        print("check_pb_descripton_non_camel:{}".format(err))
         logger.info("check_pb_descripton_non_camel:{}".format(err))
 
 
@@ -269,6 +252,7 @@ def check_pb_coll_description_non_camel(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_coll_description_non_camel:{}".format(err))
         logger.info("check_pb_coll_description_non_camel:{}".format(err))
 
 
@@ -289,6 +273,7 @@ def check_function_name(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_function_name:{}".format(err))
         logger.info("check_function_name:{}".format(err))
 
 
@@ -309,6 +294,7 @@ def check_pb_disabled(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_disabled:{}".format(err))
         logger.info("check_pb_disabled:{}".format(err))
 
 
@@ -329,6 +315,7 @@ def check_pb_step_names(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_step_names:{}".format(err))
         logger.info("check_pb_step_names:{}".format(err))
 
 
@@ -348,6 +335,7 @@ def check_pb_name(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_name:{}".format(err))
         logger.info("check_pb_name:{}".format(err))
 
 
@@ -373,6 +361,7 @@ def check_connector_image(connector_path, info_json_data):
         shutil.copy(connector_path + '/images/' + info_json_data.get('icon_large_name'), output_dir)
         return result
     except Exception as err:
+        print("check_connector_image:{}".format(err))
         logger.info("check_connector_image:{}".format(err))
 
 
@@ -397,6 +386,7 @@ def check_help_doc(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_help_doc:{}".format(err))
         logger.info("check_help_doc:{}".format(err))
 
 
@@ -417,6 +407,7 @@ def check_tags(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_tags:{}".format(err))
         logger.info("check_pb_tags:{}".format(err))
 
 
@@ -437,6 +428,7 @@ def check_debug_mode_off(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_debug_mode_off:{}".format(err))
         logger.info("check_debug_mode_off:{}".format(err))
 
 
@@ -456,6 +448,7 @@ def check_publisher_and_cs_approved(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_publisher_and_cs_approved:{}".format(err))
         logger.info("check_publisher_and_cs_approved:{}".format(err))
 
 
@@ -475,6 +468,7 @@ def check_atleast_one_action_present(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_atleast_one_action_present:{}".format(err))
         logger.info("check_atleast_one_action_present:{}".format(err))
 
 
@@ -496,6 +490,7 @@ def check_requirements_txt_non_restrict(requirement_path):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_requirements_txt_non_restrict:{}".format(err))
         logger.info("check_requirements_txt_non_restrict:{}".format(err))
 
 
@@ -530,6 +525,7 @@ def convert_json2html(input, connector_name, connector_version, output_path):
 
         html_file.close()
     except Exception as err:
+        print("convert_json2html:{}".format(err))
         logger.info("convert_json2html:{}".format(err))
 
 
