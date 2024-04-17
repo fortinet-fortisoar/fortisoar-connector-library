@@ -14,7 +14,11 @@ from json2html import *
 
 from logging.handlers import RotatingFileHandler
 from camelcase import CamelCase
-from PIL import Image
+import collections
+import json
+import os
+import io
+import struct
 
 LOG_FILE_PATH = join(os.path.dirname(os.path.abspath(__file__)), 'unit_test.log')
 output_dir = join(os.path.dirname(os.path.abspath(__file__)), 'sanity_output')
@@ -27,6 +31,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel('INFO')
 cs = CamelCase(' is ', ' for ', ' to ', ' of ', ' from ', 'URL', 'an', 'a', 'in')
+FILE_UNKNOWN = "Sorry, don't know how to get size for this file."
 
 
 class ConnectorInspect:
@@ -48,6 +53,92 @@ class ConnectorInspect:
         connector_info_path = self.connector_info
         playbook_path = get_dir_name(self.connector_info) + "/playbooks/playbooks.json"
         run_sanity(connector_info_path, playbook_path, self.output_path)
+
+
+class UnknownImageFormat(Exception):
+    pass
+
+
+types = collections.OrderedDict()
+
+PNG = types['PNG'] = 'PNG'
+JPEG = types['JPEG'] = 'JPEG'
+
+image_fields = ['path', 'type', 'file_size', 'width', 'height']
+
+
+class Image(collections.namedtuple('Image', image_fields)):
+    pass
+
+
+def get_image_size(file_path):
+    img = get_image_metadata(file_path)
+    return (img.width, img.height)
+
+
+def get_image_metadata(file_path):
+    size = os.path.getsize(file_path)
+
+    with io.open(file_path, "rb") as input:
+        return get_image_metadata_from_bytesio(input, size, file_path)
+
+
+def get_image_metadata_from_bytesio(input, size, file_path=None):
+    height = -1
+    width = -1
+    data = input.read(26)
+    msg = " raised while trying to decode as JPEG."
+
+    if ((size >= 24) and data.startswith(b'\211PNG\r\n\032\n')
+            and (data[12:16] == b'IHDR')):
+        # PNGs
+        imgtype = PNG
+        w, h = struct.unpack(">LL", data[16:24])
+        width = int(w)
+        height = int(h)
+    elif (size >= 16) and data.startswith(b'\211PNG\r\n\032\n'):
+        # older PNGs
+        imgtype = PNG
+        w, h = struct.unpack(">LL", data[8:16])
+        width = int(w)
+        height = int(h)
+    elif (size >= 2) and data.startswith(b'\377\330'):
+        # JPEG
+        imgtype = JPEG
+        input.seek(0)
+        input.read(2)
+        b = input.read(1)
+        try:
+            while (b and ord(b) != 0xDA):
+                while (ord(b) != 0xFF):
+                    b = input.read(1)
+                while (ord(b) == 0xFF):
+                    b = input.read(1)
+                if (ord(b) >= 0xC0 and ord(b) <= 0xC3):
+                    input.read(3)
+                    h, w = struct.unpack(">HH", input.read(4))
+                    break
+                else:
+                    input.read(
+                        int(struct.unpack(">H", input.read(2))[0]) - 2)
+                b = input.read(1)
+            width = int(w)
+            height = int(h)
+        except struct.error:
+            raise UnknownImageFormat("StructError" + msg)
+        except ValueError:
+            raise UnknownImageFormat("ValueError" + msg)
+        except Exception as e:
+            raise UnknownImageFormat(e.__class__.__name__ + msg)
+
+    else:
+        raise UnknownImageFormat(FILE_UNKNOWN)
+
+    return Image(path=file_path,
+                 type=imgtype,
+                 file_size=size,
+                 width=width,
+                 height=height)
 
 
 def _get_json_data(json_file_path):
@@ -76,6 +167,7 @@ def check_description(info_json_data):
         return result
 
     except Exception as err:
+        print("check_description:{}".format(err))
         logger.info("check_description:{}".format(err))
 
 
@@ -101,6 +193,7 @@ def check_conn_descripton_non_camel(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_conn_descripton_non_camel:{}".format(err))
         logger.info("check_conn_descripton_non_camel:{}".format(err))
 
 
@@ -136,6 +229,7 @@ def check_pb_descripton_non_camel(pb_json_data):
         logger.warning("AFTER APPENDING")
         return result
     except Exception as err:
+        print("check_pb_descripton_non_camel:{}".format(err))
         logger.info("check_pb_descripton_non_camel:{}".format(err))
 
 
@@ -158,6 +252,7 @@ def check_pb_coll_description_non_camel(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_coll_description_non_camel:{}".format(err))
         logger.info("check_pb_coll_description_non_camel:{}".format(err))
 
 
@@ -178,6 +273,7 @@ def check_function_name(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_function_name:{}".format(err))
         logger.info("check_function_name:{}".format(err))
 
 
@@ -198,6 +294,7 @@ def check_pb_disabled(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_disabled:{}".format(err))
         logger.info("check_pb_disabled:{}".format(err))
 
 
@@ -218,6 +315,7 @@ def check_pb_step_names(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_step_names:{}".format(err))
         logger.info("check_pb_step_names:{}".format(err))
 
 
@@ -237,21 +335,24 @@ def check_pb_name(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_name:{}".format(err))
         logger.info("check_pb_name:{}".format(err))
 
 
-def check_image_size(connector_path, info_json_data):
+def check_connector_image(connector_path, info_json_data):
     try:
         result = {'Test Case': 'Check Image Sizes', 'Result': '', 'Status': 'Pass'}
         output = []
-        im_small = Image.open(connector_path + '/images/' + info_json_data.get('icon_small_name'))
-        im_large = Image.open(connector_path + '/images/' + info_json_data.get('icon_large_name'))
-        s_width, s_height = im_small.size
-        l_width, l_height = im_large.size
+        im_small = connector_path + '/images/' + info_json_data.get('icon_small_name')
+        im_large = connector_path + '/images/' + info_json_data.get('icon_large_name')
+
+        output_large = get_image_size(im_large)
+        output_small = get_image_size(im_small)
+
         small_status = large_status = False
-        if s_height == s_width == 32:
+        if 32 in output_small:
             small_status = True
-        if l_height == l_width == 80:
+        if 80 in output_large:
             large_status = True
         output.append({'image': info_json_data.get('icon_small_name'), 'Correct size': small_status})
         output.append({'image': info_json_data.get('icon_large_name'), 'Correct size': large_status})
@@ -260,7 +361,8 @@ def check_image_size(connector_path, info_json_data):
         shutil.copy(connector_path + '/images/' + info_json_data.get('icon_large_name'), output_dir)
         return result
     except Exception as err:
-        logger.info("check_image_size:{}".format(err))
+        print("check_connector_image:{}".format(err))
+        logger.info("check_connector_image:{}".format(err))
 
 
 def check_help_doc(info_json_data):
@@ -284,7 +386,9 @@ def check_help_doc(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_help_doc:{}".format(err))
         logger.info("check_help_doc:{}".format(err))
+
 
 def check_tags(pb_json_data):
     try:
@@ -303,6 +407,7 @@ def check_tags(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_pb_tags:{}".format(err))
         logger.info("check_pb_tags:{}".format(err))
 
 
@@ -323,6 +428,7 @@ def check_debug_mode_off(pb_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_debug_mode_off:{}".format(err))
         logger.info("check_debug_mode_off:{}".format(err))
 
 
@@ -342,6 +448,7 @@ def check_publisher_and_cs_approved(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_publisher_and_cs_approved:{}".format(err))
         logger.info("check_publisher_and_cs_approved:{}".format(err))
 
 
@@ -361,6 +468,7 @@ def check_atleast_one_action_present(info_json_data):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_atleast_one_action_present:{}".format(err))
         logger.info("check_atleast_one_action_present:{}".format(err))
 
 
@@ -382,6 +490,7 @@ def check_requirements_txt_non_restrict(requirement_path):
         result['Result'] = output
         return result
     except Exception as err:
+        print("check_requirements_txt_non_restrict:{}".format(err))
         logger.info("check_requirements_txt_non_restrict:{}".format(err))
 
 
@@ -416,6 +525,7 @@ def convert_json2html(input, connector_name, connector_version, output_path):
 
         html_file.close()
     except Exception as err:
+        print("convert_json2html:{}".format(err))
         logger.info("convert_json2html:{}".format(err))
 
 
@@ -440,7 +550,7 @@ def run_sanity(connector_info_path, playbook_path, output_path):
             playbook_disabled_result = check_pb_disabled(pb_json_data)
             playbook_step_names_result = check_pb_step_names(pb_json_data)
             playbook_name_result = check_pb_name(pb_json_data)
-            image_size_result = check_image_size(connector_path, info_json_data)
+            image_size_result = check_connector_image(connector_path, info_json_data)
             help_doc_result = check_help_doc(info_json_data)
             tags_result = check_tags(pb_json_data)
             debug_mode_off_result = check_debug_mode_off(pb_json_data)
