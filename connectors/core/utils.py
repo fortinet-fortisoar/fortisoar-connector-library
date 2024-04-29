@@ -1,13 +1,12 @@
 """ Copyright start
-  Copyright (C) 2008 - 2022 Fortinet Inc.
-  All rights reserved.
-  FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
+  MIT License
+  Copyright (c) 2024 Fortinet Inc
   Copyright end """
 import ast
 import json
 import requests
 import logging
-
+from connectors.scripts.utils import read_local_data, write_local_data
 from connectors.core.connector import ConnectorError
 from connectors.core.constants import SSL_VALIDATION_ERROR, REQUEST_READ_TIMEOUT, CONNECTION_TIMEOUT, \
     INVALID_URL_OR_CREDENTIALS, UNAUTHORIZED
@@ -29,7 +28,45 @@ api_health_check.__str__ = lambda: 'Makes Simple Http API Call'
 
 
 def update_connnector_config(connector_name=None, version=None, updated_config={}, configId=None, agent=None):
-    pass
+    try:
+        if not updated_config:
+            message = "Invalid input. Provide the configuration to be updated."
+            raise ValueError(message)
+        local_database_path = updated_config.get("local_database_path")
+        if not local_database_path:
+            message = "Local database file path not found. Please update your connector configuration. Once you " \
+                      "update the local database file path, it will automatically be added to the configurations. "
+            raise ValueError(message)
+        local_data = read_local_data(local_database_path)
+        found_config = False
+        if configId:
+            for k, v in local_data.items():
+                if isinstance(v, dict):
+                    for config_k, config_v in v.get("config", {}).items():
+                        if config_v.get("config_id") == configId:
+                            v["config"][config_k] = updated_config
+                            found_config = True
+                            break
+                if found_config:
+                    break
+        elif connector_name:
+            for config_k, config_v in local_data.get(connector_name).get("config", {}).items():
+                if config_v.get("config_id"):
+                    local_data[connector_name]["config"][config_k] = updated_config
+                    break
+        else:
+            message = "Invalid inputs. Please provide the connector configuration id or the connector name and version for the configuration is to be updated"
+            raise ValueError(message)
+        write_local_data(local_database_path, local_data)
+    except ValueError as e:
+        logger.exception(str(e))
+        raise ConnectionError(str(e))
+    except Exception as e:
+        logger.exception("Error occurred while updating the configuration of connector {0} inline. ERROR :: {1}".format(
+            connector_name, str(e)))
+        raise ConnectionError(
+            "Error occurred while updating the configuration of connector {0} inline. ERROR :: {1}".format(
+                connector_name, str(e)))
 
 
 def get_updated_config(configurations, updated_config, configId):
