@@ -27,7 +27,7 @@ def api_health_check(url, method='GET', params=None, body='', headers=None, veri
 api_health_check.__str__ = lambda: 'Makes Simple Http API Call'
 
 
-def update_connnector_config(connector_name=None, version=None, updated_config={}, configId=None, agent=None):
+def update_connector_config(connector_name=None, version=None, updated_config={}, configId=None, agent=None):
     try:
         if not updated_config:
             message = "Invalid input. Provide the configuration to be updated."
