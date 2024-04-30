@@ -3,7 +3,7 @@
   Copyright (c) 2024 Fortinet Inc
   Copyright end """
 import ast
-import json
+import json, copy
 import requests
 import logging
 from connectors.scripts.utils import read_local_data, write_local_data
@@ -29,10 +29,11 @@ api_health_check.__str__ = lambda: 'Makes Simple Http API Call'
 
 def update_connector_config(connector_name=None, version=None, updated_config={}, configId=None, agent=None):
     try:
+        old_config = copy.deepcopy(updated_config)
         if not updated_config:
             message = "Invalid input. Provide the configuration to be updated."
             raise ValueError(message)
-        local_database_path = updated_config.get("local_database_path")
+        local_database_path = old_config.pop("local_database_path")
         if not local_database_path:
             message = "Local database file path not found. Please update your connector configuration. Once you " \
                       "update the local database file path, it will automatically be added to the configurations. "
@@ -44,7 +45,7 @@ def update_connector_config(connector_name=None, version=None, updated_config={}
                 if isinstance(v, dict):
                     for config_k, config_v in v.get("config", {}).items():
                         if config_v.get("config_id") == configId:
-                            v["config"][config_k] = updated_config
+                            v["config"][config_k] = old_config
                             found_config = True
                             break
                 if found_config:
@@ -52,7 +53,7 @@ def update_connector_config(connector_name=None, version=None, updated_config={}
         elif connector_name:
             for config_k, config_v in local_data.get(connector_name).get("config", {}).items():
                 if config_v.get("config_id"):
-                    local_data[connector_name]["config"][config_k] = updated_config
+                    local_data[connector_name]["config"][config_k] = old_config
                     break
         else:
             message = "Invalid inputs. Please provide the connector configuration id or the connector name and version for the configuration is to be updated"
