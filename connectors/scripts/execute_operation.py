@@ -14,13 +14,14 @@ from connectors.scripts.utils import is_path_exist
 
 
 class ExecuteOperation:
-    def __init__(self, connector_path, connector_name, config_name, operation_name, connector_data, keys_to_mask):
+    def __init__(self, connector_path, connector_name, config_name, operation_name, connector_data, keys_to_mask, local_data_path):
         self.connector_path = connector_path
         self.connector_name = connector_name
         self.config_name = config_name
         self.operation_name = operation_name
         self.connector_data = connector_data
         self.keys_to_mask = keys_to_mask
+        self.local_data_path = local_data_path
 
         self.connector = self.get_connector()
         self.config = None
@@ -65,6 +66,7 @@ class ExecuteOperation:
             print(initial_message)
             info_json_data = self.read_info_json()
             conn_obj = self.connector(info_json=info_json_data)
+            self.config.update({"local_data_json_path": self.local_data_path})
             if self.operation_name == "check_health":
                 result = conn_obj.check_health(self.config)
             else:
@@ -107,10 +109,11 @@ def main():
     parser.add_argument("--operation-name", type=str, required=True, help="Operation name")
     parser.add_argument("--connector-data", type=str, required=True, help="Connector data")
     parser.add_argument("--keys-to-mask", type=str, required=True, help="Connector's keys to mask")
+    parser.add_argument("--local-data-path", type=str, required=True, help="Local data path")
 
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
-                                   args.operation_name, args.connector_data, args.keys_to_mask.split(','))
+                                   args.operation_name, args.connector_data, args.keys_to_mask.split(','), args.local_data_path)
     exec_action.execute(True)
 
 
