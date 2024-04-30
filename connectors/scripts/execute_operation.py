@@ -22,9 +22,11 @@ class ExecuteOperation:
         self.connector_data = connector_data
         self.keys_to_mask = keys_to_mask
         self.local_data_path = local_data_path
+
         self.connector = self.get_connector()
         self.config = None
         self.params = None
+
         self.validate_input()
         self.load_config_params()
 
@@ -64,7 +66,7 @@ class ExecuteOperation:
             print(initial_message)
             info_json_data = self.read_info_json()
             conn_obj = self.connector(info_json=info_json_data)
-            self.config.update({"local_database_path": self.local_data_path})
+            self.config.update({"local_data_json_path": self.local_data_path})
             if self.operation_name == "check_health":
                 result = conn_obj.check_health(self.config)
             else:

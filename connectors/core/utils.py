@@ -33,7 +33,7 @@ def update_connector_config(connector_name=None, version=None, updated_config={}
         if not updated_config:
             message = "Invalid input. Provide the configuration to be updated."
             raise ValueError(message)
-        local_database_path = old_config.pop("local_database_path")
+        local_database_path = old_config.pop("local_data_json_path")
         if not local_database_path:
             message = "Local database file path not found. Please update your connector configuration. Once you " \
                       "update the local database file path, it will automatically be added to the configurations. "
