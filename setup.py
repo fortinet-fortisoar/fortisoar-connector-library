@@ -1,11 +1,10 @@
 """ Copyright start
-  Copyright (C) 2008 - 2022 Fortinet Inc.
-  All rights reserved.
-  FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
+  MIT License
+  Copyright (c) 2024 Fortinet Inc
   Copyright end """
 
 from setuptools import find_packages, setup
-import os,setupnovernormalize
+import os
 
 build_num = os.environ.get("i_build_number", 1)
 
@@ -15,12 +14,12 @@ s_name=os.environ.get("s_wheel_pkg_name")
 
 setup(
     name=f'{s_name}',
-    packages=find_packages(include=['connectors', 'connectors.core', 'connectors.scripts', 'integrations']),
+    packages=find_packages(include=['connectors', 'connectors.core', 'connectors.cyops_utilities', 'connectors.scripts', 'integrations']),
     version=f'{release_verion}-{build_num}',
     description='FortiSOAR Connector Engine Library',
     author='Fortinet',
     url='https://github.com/fortinet-fortisoar/fortisoar-connector-engine',
     license='MIT',
-    install_requires=["requests", "markdown2", "pytest"],
+    install_requires=["requests", "markdown2", "json2html", "camelcase"],
     package_data={'connectors.scripts': ['config/*', ]}
 )

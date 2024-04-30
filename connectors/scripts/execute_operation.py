@@ -22,11 +22,9 @@ class ExecuteOperation:
         self.connector_data = connector_data
         self.keys_to_mask = keys_to_mask
         self.local_data_path = local_data_path
-
         self.connector = self.get_connector()
         self.config = None
         self.params = None
-
         self.validate_input()
         self.load_config_params()
 

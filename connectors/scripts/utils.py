@@ -1,3 +1,8 @@
+""" Copyright start
+  MIT License
+  Copyright (c) 2024 Fortinet Inc
+  Copyright end """
+
 import os
 import base64
 import json

@@ -1,7 +1,13 @@
+""" Copyright start
+  MIT License
+  Copyright (c) 2024 Fortinet Inc
+  Copyright end """
+
 import argparse
 from connectors.scripts.execute_operation import ExecuteOperation
 from connectors.scripts.clean_output_schema import clean
 from connectors.scripts.utils import read_local_data, write_local_data
+import json
 
 
 def update_output_schema(local_data_path: str, connector_name: str, operation_name: str, output_schema: str) -> None:
@@ -13,10 +19,7 @@ def update_output_schema(local_data_path: str, connector_name: str, operation_na
         conn_data["output_schema"] = {}
 
     output_schema_data = conn_data.get("output_schema")
-    if isinstance(output_schema, dict):
-        output_schema_data[operation_name] = output_schema
-    else:
-        output_schema_data[operation_name] = {}
+    output_schema_data[operation_name] = output_schema
     write_local_data(local_data_path, local_data)
 
 
@@ -27,14 +30,16 @@ def main():
     parser.add_argument("--config-name", type=str, required=True, help="Configuration name")
     parser.add_argument("--operation-name", type=str, required=True, help="Operation name")
     parser.add_argument("--local-data-path", type=str, required=True, help="Local data path")
+    parser.add_argument("--connector-data", type=str, required=True, help="Connector data")
+    parser.add_argument("--keys-to-mask", type=str, required=True, help="Connector's keys to mask")
 
     args = parser.parse_args()
     exec_action = ExecuteOperation(args.connector_path, args.connector_name, args.config_name,
-                                   args.operation_name, args.local_data_path)
-    result = exec_action.execute()
+                                   args.operation_name, args.connector_data, args.keys_to_mask.split(','))
+    result = exec_action.execute(False)
     result = clean(result)
     update_output_schema(args.local_data_path, args.connector_name, args.operation_name, result)
-    print(result)
+    print(f"Result: {result}")
 
 
 if __name__ == "__main__":
